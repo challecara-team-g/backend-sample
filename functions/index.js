@@ -1,32 +1,47 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
+
 const functions = require('firebase-functions');
+const express = require('express');
+var path = require('path');
+// var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-// The Firebase Admin SDK to access the Firebase Realtime Database.
-const admin = require('firebase-admin');
-admin.initializeApp();
+const app = express();
+app.get('/timestamp', (request, response) => {
+  response.set('Cache-Control', 'public, max-age=300, s-maxage=600'); //ここを追記しました
+  response.send(`${Date.now()}`);
+})
 
-// Take the text parameter passed to this HTTP endpoint and insert it into the
-// Realtime Database under the path /messages/:pushId/original
-exports.addMessage = functions.https.onRequest((req, res) => {
-  // Grab the text parameter.
-  const original = req.query.text;
-  // Push the new message into the Realtime Database using the Firebase Admin SDK.
-  return admin.database().ref('/messages').push({original: original}).then((snapshot) => {
-    // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-    return res.redirect(303, snapshot.ref.toString());
+// API Sample
+
+var users = require('./routes/users');
+
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/users', users);
+
+app.use(function(err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err: {};
+
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+app.use(function(err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err: {};
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: err
   });
 });
 
-// Listens for new messages added to /messages/:pushId/original and creates an
-// uppercase version of the message to /messages/:pushId/uppercase
-exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onCreate((snapshot, context) => {
-      // Grab the current value of what was written to the Realtime Database.
-      const original = snapshot.val();
-      console.log('Uppercasing', context.params.pushId, original);
-      const uppercase = original.toUpperCase();
-      // You must return a Promise when performing asynchronous tasks inside a Functions such as
-      // writing to the Firebase Realtime Database.
-      // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
-      return snapshot.ref.parent.child('uppercase').set(uppercase);
-    });
+// module.exports = app;
+exports.app = functions.https.onRequest(app);
