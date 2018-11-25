@@ -63,3 +63,9 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# Ignore lockfile
+package-lock.json
+
+# Ignore for mac
+.DS_Store
