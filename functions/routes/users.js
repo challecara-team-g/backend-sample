@@ -38,7 +38,20 @@ router.post('/', function(req, res, next) {
     res.json({"message": error})
     next(error);
   });
-})
+});
+
+/* Update user */
+router.put('/:name?', function(req, res, next) {
+  var userInfo = req.query.name;
+  var updateData = req.body
+  var userRef = db.collection('users').doc(userInfo);
+  userRef.update(updateData).then(ref => {
+    res.json({"message":'success'});
+  }).catch(function (error) {
+    res.json({"message": error})
+    next(error);
+  });
+});
 
 
 module.exports = router;
