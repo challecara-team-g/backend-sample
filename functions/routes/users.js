@@ -33,11 +33,12 @@ router.post('/', function(req, res, next) {
   var newData = req.body
   var docRef = db.collection('users').doc(newData.name);
   docRef.set(newData).then(ref => {
-    console.log('success');
-    res.send('success');
+    res.json({"message":'success'});
   }).catch(function (error) {
-    console.log(error);
+    res.json({"message": error})
     next(error);
   });
 })
+
+
 module.exports = router;
