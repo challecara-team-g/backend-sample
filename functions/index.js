@@ -8,14 +8,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 const app = express();
-app.get('/timestamp', (request, response) => {
-  response.set('Cache-Control', 'public, max-age=300, s-maxage=600'); //ここを追記しました
-  response.send(`${Date.now()}`);
-})
-
 // API Sample
 
 var users = require('./routes/users');
+var tasks = require('./routes/tasks');
+var groups = require('./routes/groups');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -24,14 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', users);
-
-// app.use(function(err, req, res, next) {
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err: {};
-
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+app.use('/users', groups);
+app.use('/users', tasks);
 
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
@@ -43,5 +34,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// module.exports = app;
 exports.app = functions.https.onRequest(app);
