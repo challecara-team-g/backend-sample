@@ -20,7 +20,7 @@ router.get('/:name?', function(req, res, next) {
       if (!doc.exists) {
         res.json({"message": "No such document!"});
       } else {
-        res.json({"message": 'success', doc});
+        res.json({"message": "success", [userInfo]: doc.data()});
       }
     })
     .catch(err => {
@@ -33,11 +33,35 @@ router.post('/', function(req, res, next) {
   var newData = req.body
   var docRef = db.collection('users').doc(newData.name);
   docRef.set(newData).then(ref => {
-    console.log('success');
-    res.send('success');
+    res.json({"message":'success'});
   }).catch(function (error) {
-    console.log(error);
+    res.json({"message": error})
     next(error);
   });
-})
+});
+
+/* Update user */
+router.put('/:name?', function(req, res, next) {
+  var userInfo = req.query.name;
+  var updateData = req.body
+  var userRef = db.collection('users').doc(userInfo);
+  userRef.update(updateData).then(ref => {
+    res.json({"message":'success'});
+  }).catch(function (error) {
+    res.json({"message": error})
+    next(error);
+  });
+});
+
+router.delete('/:name?', function(req, res, next){
+  var userInfo = req.query.name;
+  var userRef = db.collection('users').doc(userInfo);
+  userRef.delete().then(ref => {
+    res.json({"message": "success"});
+  }).catch(function (error){
+    res.json({"message": error})
+    next(error);
+  });
+});
+
 module.exports = router;
