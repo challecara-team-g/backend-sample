@@ -20,7 +20,7 @@ router.get('/:name?', function(req, res, next) {
       if (!doc.exists) {
         res.json({"message": "No such document!"});
       } else {
-        res.json({"message": "success", userInfo: doc.data()});
+        res.json({"message": "success", [userInfo]: doc.data()});
       }
     })
     .catch(err => {
