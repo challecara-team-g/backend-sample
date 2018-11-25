@@ -53,5 +53,15 @@ router.put('/:name?', function(req, res, next) {
   });
 });
 
+router.delete('/:name?', function(req, res, next){
+  var userInfo = req.query.name;
+  var userRef = db.collection('users').doc(userInfo);
+  userRef.delete().then(ref => {
+    res.json({"message": "success"});
+  }).catch(function (error){
+    res.json({"message": error})
+    next(error);
+  });
+});
 
 module.exports = router;
