@@ -1,7 +1,10 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 var sys = require('util');
+var bodyParser = require('body-parser');
 var express = require('express');
+const app = express();
+app.use(bodyParser.json());
 var router = express.Router();
 
 // setup firestore
@@ -9,19 +12,22 @@ admin.initializeApp(functions.config().firebase);
 var db = admin.firestore();
 
 /* Get user list */
-router.get('/', function(req, res, next) {
-  db.collection('users').get()
-    .then((snapshot) => {
-      var users = new Array();
-      snapshot.forEach((doc) => {
-        users.push(doc.data());
-      });
-      res.json(users);
+router.get('/:name?', function(req, res, next) {
+  var userInfo = req.query.name;
+  var userRef = db.collection('users').doc(userInfo);
+  var getDoc = userRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        res.json({"message": "No such document!"});
+      } else {
+        res.json({"message": 'success', doc});
+      }
     })
-    .catch((err) => {
-      next(err);
+    .catch(err => {
+      res.json({"message": err});
     });
 });
+
 /* Post new user*/
 router.post('/', function(req, res, next) {
   var newData = req.body
