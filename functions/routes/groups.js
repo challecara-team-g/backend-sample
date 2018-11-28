@@ -8,7 +8,6 @@ app.use(bodyParser.json());
 var router = express.Router();
 
 // setup firestore
-// admin.initializeApp(functions.config().firebase);
 var db = admin.firestore();
 
 /* Get user list */
