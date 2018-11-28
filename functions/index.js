@@ -21,8 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', users);
-app.use('/users', groups);
-app.use('/users', tasks);
+app.use('/tasks', groups);
+app.use('/groups', tasks);
 
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
