@@ -10,20 +10,57 @@ var router = express.Router();
 // setup firestore
 var db = admin.firestore();
 
-/* Get user list */
+/* Get group list */
 router.get('/:name?', function(req, res, next) {
   var groupInfo = req.query.name;
-  
-
-/* Post new user*/
-router.post('/', function(req, res, next) {
+  var groupRef = db.collection('groups').doc(groupInfo);
+  var getDoc = groupRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        res.json({"message": "No such document!"});
+      } else {
+        res.json({"message": "success", [groupInfo]: doc.data()});
+      }
+    })
+    .catch(err => {
+      res.json({"message": err});
+    });
 });
 
-/* Update user */
+/* Post new group*/
+router.post('/', function(req, res, next) {
+  var newData = req.body
+  var docRef = db.collection('groups').doc(newData.name);
+  docRef.set(newData).then(ref => {
+    res.json({"message":'success'});
+  }).catch(function (error) {
+    res.json({"message": error})
+    next(error);
+  });
+});
+
+/* Update group */
 router.put('/:name?', function(req, res, next) {
+  var groupInfo = req.query.name;
+  var updateData = req.body
+  var groupRef = db.collection('groups').doc(groupInfo);
+  groupRef.update(updateData).then(ref => {
+    res.json({"message":'success'});
+  }).catch(function (error) {
+    res.json({"message": error})
+    next(error);
+  });
 });
 
 router.delete('/:name?', function(req, res, next){
+  var userInfo = req.query.name;
+  var userRef = db.collection('groups').doc(groupInfo);
+  groupRef.delete().then(ref => {
+    res.json({"message": "success"});
+  }).catch(function (error){
+    res.json({"message": error})
+    next(error);
+  });
 });
 
 module.exports = router;
