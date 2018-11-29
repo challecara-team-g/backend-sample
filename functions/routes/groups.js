@@ -12,7 +12,8 @@ var db = admin.firestore();
 
 /* Get user list */
 router.get('/:name?', function(req, res, next) {
-});
+  var groupInfo = req.query.name;
+  
 
 /* Post new user*/
 router.post('/', function(req, res, next) {
