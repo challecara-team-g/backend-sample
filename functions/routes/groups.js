@@ -53,8 +53,8 @@ router.put('/:name?', function(req, res, next) {
 });
 
 router.delete('/:name?', function(req, res, next){
-  var userInfo = req.query.name;
-  var userRef = db.collection('groups').doc(groupInfo);
+  var groupInfo = req.query.name;
+  var groupRef = db.collection('groups').doc(groupInfo);
   groupRef.delete().then(ref => {
     res.json({"message": "success"});
   }).catch(function (error){
