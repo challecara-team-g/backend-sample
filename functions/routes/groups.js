@@ -11,7 +11,7 @@ var router = express.Router();
 var db = admin.firestore();
 
 /* Get group list */
-router.get('/:name?', function(req, res, next) {
+router.get('/', function(req, res, next) {
   var groupInfo = req.query.name;
   var groupRef = db.collection('groups').doc(groupInfo);
   var getDoc = groupRef.get()
@@ -40,7 +40,7 @@ router.post('/', function(req, res, next) {
 });
 
 /* Update group */
-router.put('/:name?', function(req, res, next) {
+router.put('/', function(req, res, next) {
   var groupInfo = req.query.name;
   var updateData = req.body
   var groupRef = db.collection('groups').doc(groupInfo);
@@ -52,7 +52,7 @@ router.put('/:name?', function(req, res, next) {
   });
 });
 
-router.delete('/:name?', function(req, res, next){
+router.delete('/', function(req, res, next){
   var groupInfo = req.query.name;
   var groupRef = db.collection('groups').doc(groupInfo);
   groupRef.delete().then(ref => {
